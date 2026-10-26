@@ -9,7 +9,7 @@ The `cloud-iac` mode gives Bob the role of a senior cloud infrastructure enginee
 ## What it is not
 
 This mode does not design architecture, generate application code, or produce test suites. For those, see:
-- `bob-cloud-architect` — architecture design
+- [`bob-cloud-architect`](https://github.com/krondor/bob-cloud-architect) — architecture design
 - `bob-cloud-codegen` — Python source code generation
 - `bob-cloud-testing` — test suite generation
 
