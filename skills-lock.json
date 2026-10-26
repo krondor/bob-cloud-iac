@@ -1,0 +1,43 @@
+{
+  "_comment": [
+    "skills-lock.json — pinned skill sources for bob-cloud-iac.",
+    "",
+    "A skill is a SKILL.md file that Bob loads via use_skill. It can come from any source.",
+    "This file records where each installed skill came from and what version/commit was",
+    "vendored, so the workspace is reproducible and auditable."
+  ],
+  "skills": {
+    "terraform-multi-cloud-patterns": {
+      "source": "local",
+      "type": "custom",
+      "version": "0.1.0",
+      "path": ".bob/skills/terraform-multi-cloud-patterns/SKILL.md",
+      "description": "Reference module architectures for AWS, Azure, and GCP in Terraform, covering storage, messaging, serverless compute, remote state backends, provider configurations, and tagging standards.",
+      "authored": "2026-03-30"
+    },
+    "iac-security-and-compliance": {
+      "source": "local",
+      "type": "custom",
+      "version": "0.1.0",
+      "path": ".bob/skills/iac-security-and-compliance/SKILL.md",
+      "description": "Security hardening controls, CIS cloud benchmark alignments, tfsec/checkov compliance checklists, private networking patterns, and least-privilege IAM policies in Terraform.",
+      "authored": "2026-03-30"
+    },
+    "enterprise-data-iac-patterns": {
+      "source": "local",
+      "type": "custom",
+      "version": "0.1.0",
+      "path": ".bob/skills/enterprise-data-iac-patterns/SKILL.md",
+      "description": "Terraform configurations for enterprise data integrations including Snowflake storage integrations, Databricks external locations, BigQuery datasets, Kafka, and data lake storage roles.",
+      "authored": "2026-03-30"
+    },
+    "iac-quality-and-review": {
+      "source": "local",
+      "type": "custom",
+      "version": "0.1.0",
+      "path": ".bob/skills/iac-quality-and-review/SKILL.md",
+      "description": "IaC quality checklist, security hardening audit items, CIS benchmark compliance, provider pinning rules, and P0/P1 review finding criteria for Terraform configurations.",
+      "authored": "2026-03-30"
+    }
+  }
+}

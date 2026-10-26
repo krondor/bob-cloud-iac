@@ -1,0 +1,9 @@
+# Normalize line endings; LF in the repo and working tree
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.pdf binary
+
+# Terraform lock files are generated; collapse in diffs
+.terraform.lock.hcl linguist-generated=true

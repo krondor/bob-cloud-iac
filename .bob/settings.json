@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "tool:edit": [
+      {
+        "description": "Run terraform fmt check on .tf files before edit",
+        "command": "node .bob/hooks/pre-edit.mjs",
+        "modes": ["cloud-iac"]
+      }
+    ]
+  }
+}

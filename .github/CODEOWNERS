@@ -1,0 +1,7 @@
+# Default owner for everything; narrow by path as maintainers are added.
+*                     @krondor
+/.bob/custom_modes.yaml @krondor
+/.bob/hooks/          @krondor
+/.bob/skills/         @krondor
+/scripts/             @krondor
+/skills-lock.json     @krondor

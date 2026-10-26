@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "aws-docs": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@aws/amazon-q-developer-mcp-server", "--headless"],
+      "comment": "AWS Documentation MCP. Grounds Terraform AWS provider resource arguments against current documentation. See https://github.com/awslabs/mcp/tree/main/src/aws-documentation-mcp-server for setup."
+    },
+    "azure-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@azure/mcp@latest", "--readonly"],
+      "comment": "Azure MCP Server in read-only mode. Useful for Azure Verified Modules lookup and Terraform policy validation. See https://github.com/microsoft/mcp for setup and auth."
+    },
+    "gcp-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@google-cloud/mcp"],
+      "comment": "Google Cloud remote MCP server. Read-only. Grounding for GCP org policy and IAM when writing Terraform. See https://docs.cloud.google.com/mcp/overview for available toolsets and auth."
+    }
+  }
+}
