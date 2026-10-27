@@ -56,7 +56,7 @@ This mode does not run `apply`, `destroy`, `import`, `state rm/mv/push`, `force-
 
 - **Not yet run against a real engagement.** Mode YAML syntax has been validated; first pilot run is the real test.
 - **AGENTS.md has placeholder sections.** Fill them in before running any Terraform generation session.
-- **Hooks (terraform fmt) ship with this repo.** Copy `.bob/hooks/` and `.bob/settings.json` (or use `--with-hooks`). Requires `terraform` on `PATH`. Note: `terraform validate` is not hooked because it requires `terraform init` — run it manually after generating a module.
+- **Hooks (terraform fmt) ship with this repo.** Copy `.bob/hooks/` and `.bob/settings.json` (or use `--with-hooks`). Requires `terraform` on `PATH`; if it is missing the hook skips the check and logs a notice to stderr. Note: `terraform validate` is not hooked because it requires `terraform init` — run it manually after generating a module.
 - **Cloud documentation MCPs are recommended.** Terraform provider arguments change across versions. MCPs prevent hallucinated argument names. See `.bob/mcp.json.example`.
 
 ## Local customization
@@ -86,13 +86,13 @@ To add a new rules domain (e.g. cost optimization):
 
 ### Enable or modify hooks
 
-The repo ships a pre-edit hook at `.bob/hooks/pre-edit.mjs` that runs `terraform fmt -check` before every `.tf` file write. To enable it:
+The repo ships a `PostToolUse` hook at `.bob/hooks/post-edit-fmt.mjs` that runs `terraform fmt -check` on a `.tf` or `.tfvars` file after Bob writes it (`write_file`, `apply_diff`, `insert_content`, `search_and_replace`). A format failure is reported back to the agent; the hook cannot block a write that has already happened. To enable it:
 
 ```bash
 node scripts/install.mjs --with-hooks /path/to/your-project
 ```
 
-Or manually copy `.bob/hooks/` and `.bob/settings.json` into your workspace and trust it in Bob. To change what the hook checks, edit `.bob/hooks/pre-edit.mjs` directly.
+Or manually copy `.bob/hooks/` and `.bob/settings.json` into your workspace and trust it in Bob (hooks run only in trusted workspaces). To change what the hook checks, edit `.bob/hooks/post-edit-fmt.mjs` directly.
 
 ### Configure MCP servers
 

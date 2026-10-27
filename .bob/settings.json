@@ -1,10 +1,15 @@
 {
   "hooks": {
-    "tool:edit": [
+    "PostToolUse": [
       {
-        "description": "Run terraform fmt check on .tf files before edit",
-        "command": "node .bob/hooks/pre-edit.mjs",
-        "modes": ["cloud-iac"]
+        "matcher": "^(write_file|apply_diff|insert_content|search_and_replace)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .bob/hooks/post-edit-fmt.mjs",
+            "timeout": 20
+          }
+        ]
       }
     ]
   }

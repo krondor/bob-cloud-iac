@@ -4,6 +4,9 @@
 # Generated IaC outputs and upstream architecture deliverables — committed selectively via PR, not auto-tracked
 docs/
 
+# Reviewer findings and scanner output (evals/<spec-id>/iac/) — committed selectively via PR, not auto-tracked
+evals/
+
 # Node
 node_modules/
 .npm/

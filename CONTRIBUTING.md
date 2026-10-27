@@ -8,7 +8,7 @@ Good contributions to this repo:
 
 - **Rules improvements** — corrections, additions, or restructuring of files in `.bob/rules-cloud-iac/`
 - **New rules domains** — a new numbered rules file for a gap in current coverage (e.g. cost optimization, disaster recovery patterns, multi-region active-active)
-- **Hook improvements** — changes to `.bob/hooks/pre-edit.mjs` (additional checks, better error messages, graceful fallback improvements)
+- **Hook improvements** — changes to `.bob/hooks/post-edit-fmt.mjs` (additional checks, better error messages, graceful fallback improvements)
 - **MCP configuration corrections** — updated server package names, corrected documentation links, added required arguments
 - **AGENTS.md template improvements** — better placeholder text, missing sections
 - **Installer fixes** — bug fixes or new flags in `scripts/install.mjs`
@@ -75,19 +75,22 @@ Include in the PR description:
 
 Rules files in this repo follow a consistent style: short sections, HCL examples with inline comments, and cloud-specific tables where AWS/Azure/GCP differ. New files should match that style.
 
-## Modifying the pre-edit hook
+## Modifying the format hook
 
-The hook at `.bob/hooks/pre-edit.mjs` runs `terraform fmt -check` before every `.tf` write. Principles to preserve:
+The hook at `.bob/hooks/post-edit-fmt.mjs` is a `PostToolUse` hook, registered in `.bob/settings.json`. It runs `terraform fmt -check` on a `.tf` or `.tfvars` file after Bob writes it. Principles to preserve:
 
-- Fail open: if `terraform` is not on PATH, exit 0 and allow the edit
-- Non-Terraform files must pass through without running any checks
-- Error output goes to stderr; exit 0 = allow, non-zero = block
-- Do not run `terraform validate` in the hook — it requires `terraform init` and is not safe to run automatically
+- Bob sends the event as JSON on stdin; the written file is `tool_input.path`, resolved against `cwd`.
+- `PostToolUse` cannot block (the write already happened). Always exit 0; print findings to stdout so Bob adds them beside the tool result.
+- Fail open: if `terraform` cannot be run, exit 0 and log a notice to stderr only (stderr stays out of model context).
+- Non-HCL files, missing files and malformed input must pass through silently.
+- Run the binary with an argument array (`spawnSync`), never a shell string, so paths cannot inject commands.
+- Do not run `terraform validate` in the hook — it requires `terraform init` and initialized providers.
+- Only exit code 2 from a `PreToolUse` or `UserPromptSubmit` command handler blocks an action; any other failure fails open. Hooks run only in trusted workspaces.
 
-After changing the hook, test it manually:
+`npm test` covers the hook with a stub `terraform` binary (`test/hook.test.mjs`). To try it by hand:
 ```bash
-echo '{"path": "terraform/aws/main.tf"}' | node .bob/hooks/pre-edit.mjs
-echo '{"path": "README.md"}' | node .bob/hooks/pre-edit.mjs
+printf '%s' '{"cwd":".","hook_event_name":"PostToolUse","tool_name":"write_file","tool_input":{"path":"modules/storage/aws/main.tf"},"tool_use_id":"t"}' | node .bob/hooks/post-edit-fmt.mjs
+printf '%s' '{"cwd":".","hook_event_name":"PostToolUse","tool_name":"write_file","tool_input":{"path":"README.md"},"tool_use_id":"t"}' | node .bob/hooks/post-edit-fmt.mjs
 ```
 
 ## Adding or updating a skill
@@ -103,11 +106,8 @@ echo '{"path": "README.md"}' | node .bob/hooks/pre-edit.mjs
 # Dry-run the installer against a temp workspace
 node scripts/install.mjs --dry-run /tmp/test-workspace
 
-# Test hook with a Terraform file
-echo '{"path": "terraform/aws/main.tf"}' | node .bob/hooks/pre-edit.mjs
-
-# Test hook pass-through on non-Terraform file
-echo '{"path": "README.md"}' | node .bob/hooks/pre-edit.mjs
+# Run the full suite (installer + hook tests)
+npm test
 ```
 
 ## Review expectations
@@ -117,6 +117,6 @@ PRs are reviewed for:
 - Consistency with existing rules style (HCL examples, cloud comparison tables, concise prescriptive prose)
 - Correct `<!-- load when: ... -->` header on any new rules file
 - Dispatch table updated if a new rules file was added
-- Hook changes preserve fail-open behavior and the no-validate constraint
+- Hook changes preserve fail-open behavior, the always-exit-0 `PostToolUse` contract, and the no-validate constraint
 - No org-specific or client-specific content
 - `skills-lock.json` updated if a skill was added or changed
